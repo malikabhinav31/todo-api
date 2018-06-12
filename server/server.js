@@ -1,9 +1,11 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 
-const mongoose=require('./mongoose/mongoose');
+const {mongoose}=require('./mongoose/mongoose');
 const Todo=require('./mongoose/todo').Todo;
-const Users=require('./mongoose/users');
+const {Users}=require('./mongoose/users');
+
+const {ObjectID}=require('mongodb');
 
 
  
@@ -34,5 +36,17 @@ app.listen(3000,()=>{
    console.log("connected");
 });
 
+app.get('/todo/:id',(req,res)=>{
+	var id=req.params.id;
+	if(!ObjectID.isValid(id)){
+		res.status(404).send();
+	}
+	Todo.findById(id).then((todo)=> {
+                         if(!todo){
+                         	res.status(404).send();
+                         }
+		                 res.status(200).send({todo});})
+	                 .catch((e)=> res.status(404).send() );
 
+});
 module.exports={app};
