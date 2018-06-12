@@ -1,9 +1,9 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 
-const mongoose=require('./mongoose/mongoose.js');
-const Todo=require('./mongoose/todo.js').Todo;
-const Users=require('./mongoose/users.js');
+const mongoose=require('./mongoose/mongoose');
+const Todo=require('./mongoose/todo').Todo;
+const Users=require('./mongoose/users');
 
 
  
@@ -26,3 +26,6 @@ app.post('/todo',(req,res)=>{
 app.listen(3000,()=>{
    console.log("connected");
 });
+
+
+module.exports={app};
