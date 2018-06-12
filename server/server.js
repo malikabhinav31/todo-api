@@ -9,7 +9,7 @@ const {ObjectID}=require('mongodb');
 
 
  
-
+const port=process.env.PORT||3000;
 var app=express();
 
 app.use(bodyParser.json());
@@ -32,10 +32,6 @@ app.get('/todo',(req,res)=>{
         res.status(400).send(e);
 	});
 });
-app.listen(3000,()=>{
-   console.log("connected");
-});
-
 app.get('/todo/:id',(req,res)=>{
 	var id=req.params.id;
 	if(!ObjectID.isValid(id)){
@@ -50,4 +46,9 @@ app.get('/todo/:id',(req,res)=>{
 	                 .catch((e)=> res.status(404).send() );
 
 });
+app.listen(port,()=>{
+   console.log("Started at port "+port);
+});
+
+
 module.exports={app};
