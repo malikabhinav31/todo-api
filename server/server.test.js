@@ -6,7 +6,7 @@ const {app}=require('./server');
 const {Todo}=require('./mongoose/todo');
 
 const todos=[{_id: new ObjectID(), text:"dummy text 1"},
-             {id: new ObjectID(),text:"dummy text 2"}];
+             {_id: new ObjectID(),text:"dummy text 2"}];
 
 beforeEach((done)=>{
    Todo.remove({}).then(()=>{
@@ -87,6 +87,42 @@ describe('GET /todo/:id',(done)=>{
    it('should not get id',(done)=>{
     var id =new ObjectID().toHexString();
     request(app).get(`/todo/${id}`)
+                .expect(404)
+                .end(done);
+   });
+});
+
+
+describe('DELETE /todo/:id',(req,res)=>{
+  it('should delete a todo',(done)=>{
+  //  console.log(todos,todos[0],todos[0]._id);
+    var id=todos[0]._id.toHexString();
+
+    request(app).delete(`/todo/${id}`)
+                .expect(200)
+                .expect((res)=>{
+                  expect(res.body.docs._id).toBe(id);
+                })
+                .end((err)=>{
+                  if(err){
+                    return done(err);
+                  }
+
+                  Todo.findById(id).then((doc)=>{
+                    expect(doc).toBe(null);
+                    done();
+                  }).catch((e)=>done(e));
+                });
+  });
+   it('should not get id',(done)=>{
+    var id =new ObjectID().toHexString();
+    request(app).delete(`/todo/${id}`)
+                .expect(404)
+                .end(done);
+   });
+
+   it('should not validate id',(done)=>{
+    request(app).delete('/todo/123')
                 .expect(404)
                 .end(done);
    });

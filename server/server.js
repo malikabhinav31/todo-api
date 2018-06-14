@@ -46,9 +46,30 @@ app.get('/todo/:id',(req,res)=>{
 	                 .catch((e)=> res.status(404).send() );
 
 });
+
+app.delete('/todo/:id',(req,res)=>{
+	var id=req.params.id;
+	if(!ObjectID.isValid(id)){
+		res.status(404).send();
+	}
+	Todo.findByIdAndRemove(id).then((docs)=>{
+                                 if(!docs){
+                                 	res.status(404).send();
+                                 }
+                                 res.status(200).send({docs});
+                              })
+	                          .catch((e)=>res.status(400).send());
+});
+
+
 app.listen(port,()=>{
    console.log("Started at port "+port);
 });
 
 
 module.exports={app};
+
+
+
+//cd /program files/mongodb/server/3.6/bin
+//mongod.exe --dbpath /users/abhinav/mongo-data
