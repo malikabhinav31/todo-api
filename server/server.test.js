@@ -5,8 +5,8 @@ const {ObjectID}=require('mongodb');
 const {app}=require('./server');
 const {Todo}=require('./mongoose/todo');
 
-const todos=[{_id: new ObjectID(), text:"dummy text 1"},
-             {_id: new ObjectID(),text:"dummy text 2"}];
+const todos=[{_id: new ObjectID(), text:"dummy text 1",completed:false},
+             {_id: new ObjectID(),text:"dummy text 2",completed:true,completedAt:123}];
 
 beforeEach((done)=>{
    Todo.remove({}).then(()=>{
@@ -126,4 +126,38 @@ describe('DELETE /todo/:id',(req,res)=>{
                 .expect(404)
                 .end(done);
    });
+});
+
+describe('PATCH /todo/:id',(req,res)=>{
+  it('should update todo',(done)=>{
+    var id=todos[0]._id.toHexString();
+    var text="new text",completed=true;
+
+    request(app).patch(`/todo/${id}`)
+                .send({text,completed})
+                .expect(200)
+                .expect((res)=>{
+                  expect(res.body.todo.text).toBe(text);
+                  expect(res.body.todo.completed).toBe(true);
+                  expect(typeof res.body.todo.completedAt).toBe('number');
+                })
+                .end(done);
+  });
+
+  it('should clear completedAt when not completed',(done)=>{
+    var id=todos[1]._id.toHexString();
+    var text="new text2",completed=false;
+
+    request(app).patch(`/todo/${id}`)
+                .send({text,completed})
+                .expect(200)
+                .expect((res)=>{
+                  expect(res.body.todo.text).toBe(text);
+                  expect(res.body.todo.completed).toBe(false);
+                  expect(res.body.todo.completedAt).toBe(null);
+                })
+                .end(done);
+  });
+
+
 });
