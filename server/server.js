@@ -7,6 +7,7 @@ const _=require('lodash');
 const {mongoose}=require('./mongoose/mongoose');
 const Todo=require('./mongoose/todo').Todo;
 const {Users}=require('./mongoose/users');
+const {authenticate}=require('./middleware');
 
 const {ObjectID}=require('mongodb');
 
@@ -99,7 +100,9 @@ app.post("/users",(req,res)=>{
 
 });
 
-
+app.get('/users/me',authenticate,(req,res)=>{
+	res.send(req.user);
+});
 app.listen(port,()=>{
    console.log("Started at port "+port);
 });
@@ -113,4 +116,6 @@ module.exports={app};
 cd /program files/mongodb/server/3.6/bin
 mongod.exe --dbpath /users/abhinav/mongo-data
 
+
+cd desktop/nodep/todo-api/server
 */
